@@ -3,6 +3,14 @@ package com.example.inkl;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements categoryRVAdapter.CategoryClickInterface{
 //119b397008734f089b2fc4aeb8c23b03
@@ -49,9 +57,39 @@ public class MainActivity extends AppCompatActivity implements categoryRVAdapter
     private void getNews(String category){
         loadingPB.setVisibility(View.VISIBLE);
         articlesArrayList.clear();
-        String CategoryURL = "";
-        String url="";
-        String BASE_URL="";
+        String categoryURL = "https://newsapi.org/v2/top-headlines?country=in&category="+category+"&apiKey=119b397008734f089b2fc4aeb8c23b";
+        String url="https://newsapi.org/v2/top-headlines?country=in&excludeDomains=stackoverflow.com&sortBy=publishedAt&language=en&apiKey=119b397008734f089b2fc4aeb8c23b";
+        String BASE_URL="https://newsapi.org/";
+        Reteofit reteofit=new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RetrofitAPI retrofitAPI =retrofit.create(RretrofitAPI.class);
+        Call<NewsModal> call;
+        if(category.equals("All")){
+            call= retrofitAPI.getAllNews(url);
+        }else{
+            call=retrofitAPI.getNewsByCategoryURL);
+
+        }
+        call.enqueue(new Callback<NewsModal>()){
+            @Override
+            public void onFailure(Call<NewsModal> call, Response<NewsModal>response){
+                 NewsModal newsModal= response.body();
+                 loadingPB.setVisibility(View.GONE);
+                ArrayList<Articles> articles= newsModal.getArticles();
+                for(int i=0; i< articles.size();i++){
+                    articlesArrayList.add(new Articles(articles.get(i).getTitle(),articles.get(i).getDescription(),articles.get(i).getUrlToImage(),articles.get(i).getUrl(),articles.get(i).getContent()));
+                }
+                newsRVAdapter.notifyDataSetChaged();
+            }
+
+            }
+            @Override
+            public void onFailure(Call<NewsModal> call,Throwable t);
+            Toast.makeText(MainActivity.this, "Fail to get news", Toast.LENGTH_SHORT).show();
+
+
     }
 
     @Override
