@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements categoryRVAdapter
         newsRV.setAdapter(newsRVAdapter);
         categoryRV.setAdapter(categoryRVAdapter);
         getCategories();
+        getNews("All");
+        newsRVAdapter.notifyDataSetChanged();
 
     }
 
@@ -48,10 +50,13 @@ public class MainActivity extends AppCompatActivity implements categoryRVAdapter
         loadingPB.setVisibility(View.VISIBLE);
         articlesArrayList.clear();
         String CategoryURL = "";
+        String url="";
+        String BASE_URL="";
     }
 
     @Override
     protected void onCategoryClick(int position) {
-    
+        String category = categoryRVModalArrayList.get(position).getCategory();
+        getNews(category);
     }
 }
